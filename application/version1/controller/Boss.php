@@ -291,31 +291,17 @@ class Boss extends Basic {
         }
     }
     function change(){
-        switch ($this->method){
-            case 'get': // get请求处理代码
-                break;
-            case 'put': // put请求处理代码
-                $user_id = Request::instance()->put('user_id');
-                $token = Request::instance()->put('token');
-                self::tokenAudit($user_id,$token);
-                $ident = Request::instance()->put('ident',0);
-                $up['user_type'] = $ident;
-                $res = Db::table('yk_user')->where('user_id',$user_id)->update($up);
-                2==$ident?$data = array('boss_id'=>'bos'.$user_id):$data = array();
-                if ($res){
-                    return Json(self::status(1,$data));
-                }else{
-                    return Json(self::status(0));
-                }
-                break;
-            case 'post': // post请求处理代码
-                break;
-            case 'delete': // delete请求处理代码
-                return Json(self::status(0));
-                break;
-            default:
-                return Json(self::status(0));
-                break;
+        $user_id = Request::instance()->put('user_id');
+        $token = Request::instance()->put('token');
+        self::tokenAudit($user_id,$token);
+        $ident = Request::instance()->put('ident',0);
+        $up['user_type'] = $ident;
+        $res = Db::table('yk_user')->where('user_id',$user_id)->update($up);
+        2==$ident?$data = array('boss_id'=>'bos'.$user_id):$data = array();
+        if ($res){
+            return Json(self::status(1,$data));
+        }else{
+            return Json(self::status(0));
         }
     }
     function demo(){
