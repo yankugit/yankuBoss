@@ -223,7 +223,42 @@ class Boss extends Basic {
                     return Json(self::status(0,$res));
                 }
                 break;
-            case 'put': // put请求处理代码
+            case 'put': // put请求处理代码,左滑右滑
+                $user_id = Request::instance()->put('user_id');
+                $token = Request::instance()->put('token');
+                self::tokenAudit($user_id,$token);
+                $type = Request::instance()->put('type');
+                $id = Request::instance()->put('id');
+                $schedule_id = Request::instance()->put('schedule_id');
+                if (1==$type){
+                    $up['schedule_status'] = 1;
+                    $update = Db::table('yk_user_schedule')
+                                ->where(array("user_id"=>$id,"schedule_id"=>$schedule_id))
+                                ->fetchSql(true)
+                                ->setField('schedule_status',1);
+                    if ($update){
+                        return Json(self::status(1));
+                    }else{
+                        return Json(self::status(0));
+                    }
+                }elseif (2 == $type){
+                    $res = Db::table("yk_user_schedule")
+                            ->field("yk_schedule.schedule_title")
+                            ->join("yk_schedule","yk_user_schedule.schedule_id=yk_schedule.schedule_id","LEFT")
+                            ->where(array("yk_user_schedule.schedule_id"=>$schedule_id,"yk_user_schedule.user_id"=>$id))
+                            ->find();
+                    $str = "很高兴您报名$res[schedule_title],若您有空，咱们可以进一步邀约面试";
+                    $hx = new Hx($this->options);
+                    $result = $hx->sendText($user_id,'users',array($id),$str,'');
+                    if ($result){
+                        return Json(self::status(1));
+                    }else{
+                        return Json(self::status(0));
+                    }
+
+                }else{
+                    return Json(self::status(0));
+                }
                 break;
             case 'post': // post请求处理代码
                 $user_id = Request::instance()->post('user_id');

@@ -158,6 +158,13 @@ class Basic extends Rest {
         $arr[$filed] = 'http://img.yankushidai.com/'.$arr[$filed];
         return $arr;
     }
+    function retur($res,$data=array()){
+        if ($res){
+            return Json(self::status(1,$data));
+        }else{
+            return Json(self::status(0,$data));
+        }
+    }
     function ce(){
         $img = 'WechatIMG7.jpeg';
         $name = explode('.',$img);
